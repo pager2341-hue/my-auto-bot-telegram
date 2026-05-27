@@ -13,9 +13,7 @@ jobs:
         with:
           python-version: '3.9'
       - name: Install dependencies
-        run: pip install telethon
+        run: pip install -r requirements.txt
       - name: Run bot
         run: python main.py
-        env:
-          PYTHONUNBUFFERED: "1"
-          
+        
