@@ -7,7 +7,6 @@ import os
 API_ID = 39359433                         
 API_HASH = '34e0e459bb9dd046a0ed4db3311ea5b8'          
 
-# လသာသာ Channel ID ကို ဖြုတ်လိုက်ပါပြီ
 MYANMAR_TARGETS = [-1003157381562] 
 FOREIGN_TARGETS = [-1003828762835]
 MY_MYANMAR_CHANNEL = '@abodlppdi'
@@ -28,33 +27,41 @@ async def main():
     await client.connect()
     history = get_history() 
 
-    # ၁။ မြန်မာကားများအတွက် (လသာသာ မပါတော့ပါ)
+    # ၁။ မြန်မာကားများအတွက် (သတိပေးစာ တစ်ခါပဲပို့မည်)
+    new_myanmar_videos = []
     for target in MYANMAR_TARGETS:
         async for message in client.iter_messages(target, limit=5, filter=telethon.tl.types.InputMessagesFilterVideo()):
             if str(message.id) not in history:
                 duration = message.file.duration if message.file else 0
                 if duration >= 60:
-                    await client.send_message(MY_MYANMAR_CHANNEL, "⚠️ ဗီဒီယိုအသစ်တင်တော့မှာဖြစ်လို့ စိတ်အနှောင့်အယှက်မဖြစ်စေရန် Notification များကို ခဏပိတ်ထားပေးပါခင်ဗျာ။ ကျေးဇူးတင်ပါတယ်! ❤️", silent=False)
-                    await asyncio.sleep(180) 
-                    
-                    await client.send_file(MY_MYANMAR_CHANNEL, file=message.media, caption="🇲🇲 မြန်မာစာတန်းထိုးရုပ်ရှင်များ ❤️", silent=True)
-                    save_history(message.id)
-                    await asyncio.sleep(15)
+                    new_myanmar_videos.append(message)
 
-    # ၂။ နိုင်ငံခြားကားများအတွက်
+    if new_myanmar_videos:
+        await client.send_message(MY_MYANMAR_CHANNEL, "⚠️ ဗီဒီယိုအသစ်တင်တော့မှာဖြစ်လို့ စိတ်အနှောင့်အယှက်မဖြစ်စေရန် Notification များကို ခဏပိတ်ထားပေးပါခင်ဗျာ။ ကျေးဇူးတင်ပါတယ်! ❤️", silent=False)
+        await asyncio.sleep(180) # ၃ မိနစ်စောင့်မည်
+        for message in new_myanmar_videos:
+            await client.send_file(MY_MYANMAR_CHANNEL, file=message.media, caption="🇲🇲 မြန်မာစာတန်းထိုးရုပ်ရှင်များ ❤️", silent=True)
+            save_history(message.id)
+            await asyncio.sleep(15)
+
+    # ၂။ နိုင်ငံခြားကားများအတွက် (သတိပေးစာ တစ်ခါပဲပို့မည်)
+    new_foreign_videos = []
     for target in FOREIGN_TARGETS:
         async for message in client.iter_messages(target, limit=5, filter=telethon.tl.types.InputMessagesFilterVideo()):
             if str(message.id) not in history:
                 duration = message.file.duration if message.file else 0
                 if duration >= 60:
-                    await client.send_message(MY_FOREIGN_CHANNEL, "⚠️ ဗီဒီယိုအသစ်တင်တော့မှာဖြစ်လို့ စိတ်အနှောင့်အယှက်မဖြစ်စေရန် Notification များကို ခဏပိတ်ထားပေးပါခင်ဗျာ။ ကျေးဇူးတင်ပါတယ်! ❤️", silent=False)
-                    await asyncio.sleep(180) 
-                    
-                    await client.send_file(MY_FOREIGN_CHANNEL, file=message.media, caption="🍿 Enjoy Your Movies! ❤️", silent=True)
-                    save_history(message.id)
-                    await asyncio.sleep(15)
+                    new_foreign_videos.append(message)
+
+    if new_foreign_videos:
+        await client.send_message(MY_FOREIGN_CHANNEL, "⚠️ ဗီဒီယိုအသစ်တင်တော့မှာဖြစ်လို့ စိတ်အနှောင့်အယှက်မဖြစ်စေရန် Notification များကို ခဏပိတ်ထားပေးပါခင်ဗျာ။ ကျေးဇူးတင်ပါတယ်! ❤️", silent=False)
+        await asyncio.sleep(180) # ၃ မိနစ်စောင့်မည်
+        for message in new_foreign_videos:
+            await client.send_file(MY_FOREIGN_CHANNEL, file=message.media, caption="🍿 Enjoy Your Movies! ❤️", silent=True)
+            save_history(message.id)
+            await asyncio.sleep(15)
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
-                    
+    
